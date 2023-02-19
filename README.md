@@ -1,7 +1,7 @@
 # rust-base64-light
 
 Base64 Encoder, Decoder for Rust.
-This is very simple library.
+This is very simple Base64 library.
 
 ## How to use
 
