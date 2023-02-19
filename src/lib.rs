@@ -1,4 +1,9 @@
 //! Base64 Encoder & Decoder
+//!
+//! This is very simple Base64 library.
+//! 
+//! - [docs.rs/base64_light](https://docs.rs/base64_light/)
+//! - [repository](https://github.com/kujirahand/rust-base64-light)
 
 /// encode Base64 &str
 pub fn base64_encode(in_str: &str) -> String {
@@ -46,7 +51,7 @@ pub fn base64_encode_bytes(in_bytes: &[u8]) -> String {
     result
 }
 
-/// Decode Base64
+/// Decode Base64 to Vec<u8>
 pub fn base64_decode(b64str: &str) -> Vec<u8> {
     let mut result: Vec<u8> = vec![];
     // make table
