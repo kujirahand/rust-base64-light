@@ -64,7 +64,6 @@ pub fn base64_decode(b64str: &str) -> Vec<u8> {
     }
     table['=' as usize] = 0; // padding
     // b64str to [u8]
-    println!("@@@{}", b64str);
     let b64bytes = b64str.as_bytes();
     // 24bit
     let cnt = b64bytes.len() / 4;

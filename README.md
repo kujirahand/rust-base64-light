@@ -22,12 +22,14 @@ use base64_light::*;
 fn main() {
     let s = "hello!";
     println!("{} => {}", s, base64_encode(s));
+    let b = "aGVsbG8h";
+    println!("{} <= {}", b, base64_decode_str(b));
 }
 ```
 
-## Manual
+## Link
 
 - [docs.rs/base64_light](https://docs.rs/base64_light/)
-- [repository](https://github.com/kujirahand/rust-base64-light)
-
+- [Repository](https://github.com/kujirahand/rust-base64-light)
+- [crates.io/crates/base64_light](https://crates.io/crates/base64_light)
 
