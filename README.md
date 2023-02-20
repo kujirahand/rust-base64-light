@@ -18,12 +18,11 @@ And use 'base64_encode()' or 'base64_decode_str()' etc ...
 
 ```
 use base64_light::*;
-
 fn main() {
     let s = "hello!";
-    println!("{} => {}", s, base64_encode(s));
+    println!("{} => {}", s, base64_encode(s)); // hello! => aGVsbG8h
     let b = "aGVsbG8h";
-    println!("{} <= {}", b, base64_decode_str(b));
+    println!("{} <= {}", b, base64_decode_str(b)); // aGVsbG8h <= hello!
 }
 ```
 
