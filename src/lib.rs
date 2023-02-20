@@ -2,8 +2,22 @@
 //!
 //! This is very simple Base64 library.
 //! 
+//!
+//! # Usages
+//! ```
+//! use base64_light::*;
+//! 
+//! let raw = "hello!";
+//! let enc = "aGVsbG8h";
+//! assert_eq!(base64_encode(raw), enc);
+//! assert_eq!(base64_decode_str(enc), raw);
+//! ```
+//!
+//! # Link
+//! - [Repository](https://github.com/kujirahand/rust-base64-light)
+//! - [crates.io/crates/base64_light](https://crates.io/crates/base64_light)
 //! - [docs.rs/base64_light](https://docs.rs/base64_light/)
-//! - [repository](https://github.com/kujirahand/rust-base64-light)
+
 
 /// encode Base64 &str
 pub fn base64_encode(in_str: &str) -> String {
