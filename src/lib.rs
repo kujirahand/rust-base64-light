@@ -51,6 +51,21 @@ pub fn base64_encode_bytes(in_bytes: &[u8]) -> String {
     result
 }
 
+/// encode Base64URL &str
+pub fn base64url_encode(in_str: &str) -> String {
+    // '+' -> '-'
+    // '/' -> '_'
+    let in_bytes = in_str.as_bytes();
+    base64_encode_bytes(in_bytes).replace('+', "-").replace('/', "_")
+}
+
+/// encode Base64URL bytes
+pub fn base64url_encode_bytes(bytes: &[u8]) -> String {
+    // '+' -> '-'
+    // '/' -> '_'
+    base64_encode_bytes(bytes).replace('+', "-").replace('/', "_")
+}
+
 /// Decode Base64 to Vec<u8>
 pub fn base64_decode(b64str: &str) -> Vec<u8> {
     let mut result: Vec<u8> = vec![];
@@ -62,9 +77,13 @@ pub fn base64_decode(b64str: &str) -> Vec<u8> {
         let key = c as usize;
         table[key] = index as u8;
     }
+    table['-' as usize] = 62; // '+' for base64url
+    table['_' as usize] = 63; // '/' for base64url
     table['=' as usize] = 0; // padding
-    // b64str to [u8]
-    let b64bytes = b64str.as_bytes();
+    // replace (CR|LF)
+    let b64 = String::from(b64str).replace("\r", "").replace("\n", "");
+    // b64 to [u8]
+    let b64bytes = b64.as_bytes();
     // 24bit
     let cnt = b64bytes.len() / 4;
     for i in 0..cnt {
@@ -95,17 +114,31 @@ pub fn base64_decode_str(b64str: &str) -> String {
     String::from_utf8_lossy(&bytes).to_string()
 }
 
+/// Base64 Encode &str, and split line 76 chars (for MIME)
+pub fn base64_encode_splitlines_str(in_str: &str) -> String {
+    let in_bytes = in_str.as_bytes();
+    base64_encode_splitlines_bytes(in_bytes)
+}
+
+/// Base64 Encode bytes, and split line 76 chars (for MIME)
+pub fn base64_encode_splitlines_bytes(in_bytes: &[u8]) -> String {
+    let res = base64_encode_bytes(in_bytes);
+    let mut lines = String::new();
+    for (i, ch) in res.chars().enumerate() {
+        lines.push(ch);
+        if i % 76 == 75 {
+            lines.push_str("\r\n");
+        }
+    }
+    lines.trim_end().to_string()
+}
+
 #[cfg(test)]
 mod tests {
     use super::*;
 
     #[test]
     fn base64_encoder_test() {
-        assert_eq!(&base64_encode("HTML"), "SFRNTA==");
-        assert_eq!(&base64_encode("hello!"), "aGVsbG8h");
-        assert_eq!(&base64_encode("JavaScript"), "SmF2YVNjcmlwdA==");
-        assert_eq!(&base64_encode("生姜焼き定食"), "55Sf5aec54S844GN5a6a6aOf");
-        //
         assert_eq!(base64_encode(""), "");
         assert_eq!(base64_encode("f"), "Zg==");
         assert_eq!(base64_encode("fo"), "Zm8=");
@@ -113,6 +146,17 @@ mod tests {
         assert_eq!(base64_encode("foob"), "Zm9vYg==");
         assert_eq!(base64_encode("fooba"), "Zm9vYmE=");
         assert_eq!(base64_encode("foobar"), "Zm9vYmFy");
+        //
+        assert_eq!(&base64_encode("HTML"), "SFRNTA==");
+        assert_eq!(&base64_encode("hello!"), "aGVsbG8h");
+        assert_eq!(&base64_encode("JavaScript"), "SmF2YVNjcmlwdA==");
+        assert_eq!(&base64_encode("生姜焼き定食"), "55Sf5aec54S844GN5a6a6aOf");
+        assert_eq!(&base64_encode("★😔"), "4piF8J+YlA==");
+        assert_eq!(&base64_encode("🏆☕️💤"), "8J+PhuKYle+4j/CfkqQ=");
+        //
+        assert_eq!(&base64url_encode("🏆☕️💤"), "8J-PhuKYle-4j_CfkqQ=");
+        //
+        assert_eq!(&base64_encode_splitlines_str("abcdeABCDEabcdeABCDEabcdeABCDEabcdeABCDEabcdeABCDEabcdeABCDE"), "YWJjZGVBQkNERWFiY2RlQUJDREVhYmNkZUFCQ0RFYWJjZGVBQkNERWFiY2RlQUJDREVhYmNkZUFC\r\nQ0RF");
     }
     #[test]
     fn base64_decoder_test() {
@@ -128,5 +172,12 @@ mod tests {
         assert_eq!(base64_decode_str("Zm9vYg=="), "foob");
         assert_eq!(base64_decode_str("Zm9vYmE="), "fooba");
         assert_eq!(base64_decode_str("Zm9vYmFy"), "foobar");
+        // CR+LF
+        assert_eq!(&base64_decode_str("aGVsbG8h\r\naGVsbG8h"), "hello!hello!");
+        // Base64url
+        assert_eq!(base64_decode_str("4piF8J+YlA=="), "★😔");
+        assert_eq!(base64_decode_str("4piF8J-YlA=="), "★😔");
+        assert_eq!(base64_decode_str("8J+PhuKYle+4j/CfkqQ="), "🏆☕️💤");
+        assert_eq!(base64_decode_str("8J-PhuKYle-4j_CfkqQ="), "🏆☕️💤");
     }
 }
