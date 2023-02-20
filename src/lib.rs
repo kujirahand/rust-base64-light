@@ -114,13 +114,13 @@ pub fn base64_decode_str(b64str: &str) -> String {
     String::from_utf8_lossy(&bytes).to_string()
 }
 
-/// Base64 Encode &str, and split line 76 chars (for MIME)
-pub fn base64_encode_splitlines_str(in_str: &str) -> String {
+/// Base64 Encode &str, and split line by 76 chars (for MIME)
+pub fn base64_encode_splitlines(in_str: &str) -> String {
     let in_bytes = in_str.as_bytes();
     base64_encode_splitlines_bytes(in_bytes)
 }
 
-/// Base64 Encode bytes, and split line 76 chars (for MIME)
+/// Base64 Encode bytes, and split line by 76 chars (for MIME)
 pub fn base64_encode_splitlines_bytes(in_bytes: &[u8]) -> String {
     let res = base64_encode_bytes(in_bytes);
     let mut lines = String::new();
@@ -152,11 +152,11 @@ mod tests {
         assert_eq!(&base64_encode("JavaScript"), "SmF2YVNjcmlwdA==");
         assert_eq!(&base64_encode("生姜焼き定食"), "55Sf5aec54S844GN5a6a6aOf");
         assert_eq!(&base64_encode("★😔"), "4piF8J+YlA==");
+        // base64url_encode
         assert_eq!(&base64_encode("🏆☕️💤"), "8J+PhuKYle+4j/CfkqQ=");
-        //
         assert_eq!(&base64url_encode("🏆☕️💤"), "8J-PhuKYle-4j_CfkqQ=");
-        //
-        assert_eq!(&base64_encode_splitlines_str("abcdeABCDEabcdeABCDEabcdeABCDEabcdeABCDEabcdeABCDEabcdeABCDE"), "YWJjZGVBQkNERWFiY2RlQUJDREVhYmNkZUFCQ0RFYWJjZGVBQkNERWFiY2RlQUJDREVhYmNkZUFC\r\nQ0RF");
+        // base64_encode_splitlines
+        assert_eq!(&base64_encode_splitlines("abcdeABCDEabcdeABCDEabcdeABCDEabcdeABCDEabcdeABCDEabcdeABCDE"), "YWJjZGVBQkNERWFiY2RlQUJDREVhYmNkZUFCQ0RFYWJjZGVBQkNERWFiY2RlQUJDREVhYmNkZUFC\r\nQ0RF");
     }
     #[test]
     fn base64_decoder_test() {
