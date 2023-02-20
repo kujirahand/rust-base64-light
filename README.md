@@ -19,10 +19,17 @@ And use 'base64_encode()' or 'base64_decode_str()' etc ...
 ```
 use base64_light::*;
 fn main() {
+    // encode string
     let s = "hello!";
     println!("{} => {}", s, base64_encode(s)); // hello! => aGVsbG8h
     let b = "aGVsbG8h";
     println!("{} <= {}", b, base64_decode_str(b)); // aGVsbG8h <= hello!
+
+    // encode file
+    let filename = "test.png";
+    let file_content = std::fs::read(filename).unwrap();
+    let encoded = base64_encode_bytes(&file_content);
+    println!("{}", encoded);
 }
 ```
 
